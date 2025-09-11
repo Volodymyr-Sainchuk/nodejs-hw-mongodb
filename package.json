@@ -1,0 +1,45 @@
+{
+  "name": "goit-node",
+  "version": "1.0.0",
+  "description": "goit-node-js",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "index": "node src/index.js",
+    "start": "node src/server.js",
+    "get-all": "node src/scripts/getAllContacts",
+    "generate": "node src/scripts/generateContacts.js",
+    "add-one": "node src/scripts/addOneContact.js",
+    "count": "node src/scripts/countContacts.js",
+    "remove-last": "node src/scripts/removeLastContact.js",
+    "remove-all": "node src/scripts/removeAllContacts.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [],
+  "author": "Volodymyr Sainchuk <sainchukvova2104@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "@faker-js/faker": "^10.0.0",
+    "eslint": "^9.34.0",
+    "globals": "^15.15.0",
+    "nodemon": "^3.1.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Volodymyr-Sainchuk/nodejs-hw-01.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Volodymyr-Sainchuk/nodejs-hw-01/issues"
+  },
+  "homepage": "https://github.com/Volodymyr-Sainchuk/nodejs-hw-01#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "expres": "^0.0.5",
+    "express": "^5.1.0",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.1",
+    "pino-http": "^10.5.0"
+  }
+}
