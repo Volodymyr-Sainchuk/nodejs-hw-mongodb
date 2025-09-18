@@ -38,8 +38,10 @@
     "dotenv": "^17.2.2",
     "expres": "^0.0.5",
     "express": "^5.1.0",
+    "http-errors": "^2.0.0",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.1",
-    "pino-http": "^10.5.0"
+    "pino-http": "^10.5.0",
+    "router": "^2.2.0"
   }
 }

@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
-import { getContacts, getContact } from './controllers/contactsController.js';
+import errrorHandler from './middlewares/errorHandler.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,9 +18,7 @@ export default function setupServer() {
     res.send('main is here');
   });
 
-  app.get('/contacts', getContacts);
-
-  app.get('/contacts/:contactId', getContact);
+  app.use(errrorHandler);
 
   app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Not found' });
