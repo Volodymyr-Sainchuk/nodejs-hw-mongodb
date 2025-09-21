@@ -3,7 +3,7 @@ import cors from 'cors';
 import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import errrorHandler from './middlewares/errorHandler.js';
-import studentRoutes from './routers/contacts.js';
+import contactsRoutes from './routers/contacts.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -14,7 +14,7 @@ export default function setupServer() {
   app.use(pino());
   app.use(express.json());
 
-  app.use('/students', studentRoutes);
+  app.use('/contacts', contactsRoutes);
 
   app.get('/', (req, res) => {
     req.log.info('GET / called');
