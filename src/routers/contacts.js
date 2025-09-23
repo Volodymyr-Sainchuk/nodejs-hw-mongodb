@@ -11,14 +11,14 @@ import {
 
 const router = express.Router();
 
-router.get('/contacts', ctrlWrapper(getContacts));
+router.get('/', ctrlWrapper(getContacts));
 
-router.get('/contacts/:contactId', ctrlWrapper(getContact));
+router.get('/:id', ctrlWrapper(getContact));
 
-router.post('/contacts', ctrlWrapper(createContactController));
+router.post('/', ctrlWrapper(createContactController));
 
-router.post('/contacts/:contactId', ctrlWrapper(updateContactController));
+router.post('/:id', ctrlWrapper(updateContactController));
 
-router.delete('/contacts/:contactId', ctrlWrapper(deleteContactController));
+router.delete('/:id', ctrlWrapper(deleteContactController));
 
 export default router;
