@@ -21,11 +21,11 @@ export default function setupServer() {
     res.send('main is here');
   });
 
-  app.use(errrorHandler);
-
   app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Not found' });
   });
+
+  app.use(errrorHandler);
 
   app.listen(PORT, (error) => {
     if (error) throw error;
