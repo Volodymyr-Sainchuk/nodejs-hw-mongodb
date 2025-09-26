@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
-import errrorHandler from './middlewares/errorHandler.js';
+import errorHandler, { notFoundHandler } from './middlewares/errorHandler.js';
 import contactsRoutes from './routers/contacts.js';
 
 const PORT = process.env.PORT || 3000;
@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 export default function setupServer() {
   initMongoConnection();
   const app = express();
+
   app.use(cors());
   app.use(pino());
   app.use(express.json());
@@ -21,11 +22,9 @@ export default function setupServer() {
     res.send('main is here');
   });
 
-  app.use((req, res) => {
-    res.status(404).json({ status: 404, message: 'Not found' });
-  });
+  app.use(notFoundHandler);
 
-  app.use(errrorHandler);
+  app.use(errorHandler);
 
   app.listen(PORT, (error) => {
     if (error) throw error;

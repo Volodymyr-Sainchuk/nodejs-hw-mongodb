@@ -43,8 +43,8 @@ export async function getContacts(req, res) {
 
 export async function getContact(req, res, next) {
   try {
-    const { contactId } = req.params;
-    const contact = await getContactById(contactId);
+    const { id } = req.params;
+    const contact = await getContactById(id);
 
     if (!contact) {
       return next(new createHttpError.NotFound('Contact not found'));
@@ -52,7 +52,7 @@ export async function getContact(req, res, next) {
 
     res.status(200).json({
       status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
+      message: `Successfully found contact with id ${id}!`,
       data: contact,
     });
   } catch (error) {
@@ -64,39 +64,48 @@ export async function getContact(req, res, next) {
   }
 }
 
-export async function createContactController(req, res) {
-  const contact = await createContact(req.body);
+export async function createContactController(req, res, next) {
+  try {
+    const contact = await createContact(req.body);
 
-  res.status(201).json({
-    status: 201,
-    message: 'Successfully created a contact!',
-    data: contact,
-  });
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully created a contact!',
+      data: contact,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
-export async function updateContactController(req, res) {
-  const contact = await updateContact(req.params.id, req.body);
+export async function updateContactController(req, res, next) {
+  try {
+    const contact = await updateContact(req.params.contactId, req.body);
 
-  if (contact === null) {
-    throw new createHttpError.NotFound('Contact not found');
+    if (!contact) {
+      throw new createHttpError.NotFound('Contact not found');
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully updated a contact!',
+      data: contact,
+    });
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully patched a contact!',
-    data: contact,
-  });
 }
 
-export async function deleteContactController(req, res) {
-  const contact = await deleteContact(req.params.id);
+export async function deleteContactController(req, res, next) {
+  try {
+    const contact = await deleteContact(req.params.contactId);
 
-  if (contact === null) {
-    throw new createHttpError.NotFound('Contact not found');
+    if (!contact) {
+      throw new createHttpError.NotFound('Contact not found');
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json({
-    status: 200,
-    message: 'Student deleted successfully',
-  });
 }
