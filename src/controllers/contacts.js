@@ -53,9 +53,11 @@ export async function createContactController(req, res, next) {
     const contact = await createContact(req.body);
 
     res.status(201).json({
-      status: 201,
-      message: 'Successfully created a contact!',
-      data: contact,
+      status: 'success',
+      code: 201,
+      data: {
+        contact: { contact },
+      },
     });
   } catch (error) {
     next(error);
@@ -64,7 +66,7 @@ export async function createContactController(req, res, next) {
 
 export async function updateContactController(req, res, next) {
   try {
-    const contact = await updateContact(req.params.contactId, req.body);
+    const contact = await updateContact(req.params.id, req.body);
 
     if (!contact) {
       throw new createHttpError.NotFound('Contact not found');
@@ -82,13 +84,13 @@ export async function updateContactController(req, res, next) {
 
 export async function deleteContactController(req, res, next) {
   try {
-    const contact = await deleteContact(req.params.contactId);
+    const contact = await deleteContact(req.params.id);
 
     if (!contact) {
       throw new createHttpError.NotFound('Contact not found');
     }
 
-    res.status(204).send();
+    res.status(204).end();
   } catch (error) {
     next(error);
   }
