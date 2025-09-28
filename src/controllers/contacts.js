@@ -15,7 +15,6 @@ import { parseFilterParams } from '../utils/parseFilterParams.js';
 export async function getContacts(req, res) {
   try {
     const { page = 1, perPage = 10 } = parsePaginationParams(req.query) || {};
-
     const { sortBy, sortOrder } = parseSortParams(req.query);
     const filter = parseFilterParams(req.query);
 
@@ -77,7 +76,7 @@ export async function createContactController(req, res) {
 export async function updateContactController(req, res) {
   const contact = await updateContact(req.params.id, req.body);
 
-  if (contact === null) {
+  if (!contact) {
     throw new createHttpError.NotFound('Contact not found');
   }
 
@@ -91,12 +90,9 @@ export async function updateContactController(req, res) {
 export async function deleteContactController(req, res) {
   const contact = await deleteContact(req.params.id);
 
-  if (contact === null) {
+  if (!contact) {
     throw new createHttpError.NotFound('Contact not found');
   }
 
-  res.status(200).json({
-    status: 200,
-    message: 'Student deleted successfully',
-  });
+  res.status(204).send();
 }
