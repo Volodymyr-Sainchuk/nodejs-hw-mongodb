@@ -1,14 +1,5 @@
 import Contact from '../models/contact.js';
 
-// export async function getAllContacts() {
-//   try {
-//     const contacts = await Contact.find();
-//     return contacts;
-//   } catch (error) {
-//     throw new Error('Error fetching contacts', error);
-//   }
-// }
-
 export async function getAllContacts({
   page = 1,
   perPage = 10,
@@ -32,12 +23,12 @@ export async function getAllContacts({
 
   return {
     data: contacts,
-    total,
     page,
     perPage,
+    totalItems: total,
     totalPages,
-    hasNextPage: totalPages > page,
     hasPreviousPage: page > 1,
+    hasNextPage: page < totalPages,
   };
 }
 

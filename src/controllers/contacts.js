@@ -15,7 +15,6 @@ import { parseFilterParams } from '../utils/parseFilterParams.js';
 export async function getContacts(req, res) {
   try {
     const { page = 1, perPage = 10 } = parsePaginationParams(req.query) || {};
-
     const { sortBy, sortOrder } = parseSortParams(req.query);
     const filter = parseFilterParams(req.query);
 
@@ -82,9 +81,9 @@ export async function updateContactController(req, res, next) {
   try {
     const contact = await updateContact(req.params.contactId, req.body);
 
-    if (!contact) {
-      throw new createHttpError.NotFound('Contact not found');
-    }
+  if (!contact) {
+    throw new createHttpError.NotFound('Contact not found');
+  }
 
     res.status(200).json({
       status: 200,
@@ -104,8 +103,9 @@ export async function deleteContactController(req, res, next) {
       throw new createHttpError.NotFound('Contact not found');
     }
 
-    res.status(204).send();
-  } catch (error) {
-    next(error);
+  if (!contact) {
+    throw new createHttpError.NotFound('Contact not found');
   }
+
+  res.status(204).send();
 }
