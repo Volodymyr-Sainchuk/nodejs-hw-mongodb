@@ -5,10 +5,10 @@ import {
   loginUserController,
   logoutUserController,
   refreshSessionController,
-} from '../controllers/auth';
+} from '../controllers/auth.js';
 
-import { validateBody } from '../middlewares/validateBody';
-import { registerSchema, loginSchema } from '../';
+import { validateBody } from '../middlewares/validateBody.js';
+import { registerSchema, loginSchema } from '../../validation/auth.js';
 
 const router = express.Router();
 

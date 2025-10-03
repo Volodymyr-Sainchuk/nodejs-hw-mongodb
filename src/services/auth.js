@@ -3,9 +3,8 @@
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 
-import { User } from '../models/user';
-import { Session } from '../models/session';
-// import { Session } from '../models/session';
+import { User } from '../models/user.js';
+import { Session } from '../models/session.js';
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
