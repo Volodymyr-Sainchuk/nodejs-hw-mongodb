@@ -81,9 +81,9 @@ export async function updateContactController(req, res, next) {
   try {
     const contact = await updateContact(req.params.contactId, req.body);
 
-  if (!contact) {
-    throw new createHttpError.NotFound('Contact not found');
-  }
+    if (!contact) {
+      throw new createHttpError.NotFound('Contact not found');
+    }
 
     res.status(200).json({
       status: 200,
@@ -103,9 +103,8 @@ export async function deleteContactController(req, res, next) {
       throw new createHttpError.NotFound('Contact not found');
     }
 
-  if (!contact) {
-    throw new createHttpError.NotFound('Contact not found');
+    res.status(204).send();
+  } catch (error) {
+    next(error);
   }
-
-  res.status(204).send();
 }
