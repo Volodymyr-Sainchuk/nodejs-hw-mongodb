@@ -1,4 +1,4 @@
-// import crypto from 'node:crypto';
+import crypto from 'node:crypto';
 
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
