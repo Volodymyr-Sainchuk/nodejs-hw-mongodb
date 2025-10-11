@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const userShema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -21,10 +21,10 @@ const userShema = new mongoose.Schema(
   { timestamps: true },
 );
 
-userShema.methods.toJson = function () {
+userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   return obj;
 };
 
-export const User = mongoose.model('User', userShema);
+export const User = mongoose.model('User', userSchema);

@@ -65,7 +65,18 @@ export async function getContact(req, res, next) {
 
 export async function createContactController(req, res, next) {
   try {
-    const contact = await createContact(req.body);
+    const { name, email, phone, isFavourite, contactType } = req.body;
+    const photo = req.file?.path || null;
+
+    const contact = await createContact({
+      name,
+      email,
+      phone,
+      isFavourite,
+      contactType,
+      photo,
+      owner: req.user._id,
+    });
 
     res.status(201).json({
       status: 201,
@@ -79,16 +90,24 @@ export async function createContactController(req, res, next) {
 
 export async function updateContactController(req, res, next) {
   try {
-    const contact = await updateContact(req.params.contactId, req.body);
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.photo = req.file.path;
+    }
 
-  if (!contact) {
-    throw new createHttpError.NotFound('Contact not found');
-  }
+    const updatedContact = await updateContact(
+      req.params.contactId,
+      updateData,
+    );
+
+    if (!updatedContact) {
+      throw new createHttpError.NotFound('Contact not found');
+    }
 
     res.status(200).json({
       status: 200,
       message: 'Successfully updated a contact!',
-      data: contact,
+      data: updatedContact,
     });
   } catch (error) {
     next(error);
@@ -103,9 +122,8 @@ export async function deleteContactController(req, res, next) {
       throw new createHttpError.NotFound('Contact not found');
     }
 
-  if (!contact) {
-    throw new createHttpError.NotFound('Contact not found');
+    res.status(204).send();
+  } catch (error) {
+    next(error);
   }
-
-  res.status(204).send();
 }
