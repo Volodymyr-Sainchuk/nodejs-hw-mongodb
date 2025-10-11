@@ -1,9 +1,14 @@
+import dotenv from 'dotenv';
 import {
   registerUser,
   loginUser,
   logoutUser,
   refreshSession,
+  requestPasswordReset,
+  resetPassword,
 } from '../services/auth.js';
+
+dotenv.config();
 
 export async function registerUserConroller(req, res) {
   const user = await registerUser(req.body);
@@ -77,3 +82,33 @@ export async function refreshSessionController(req, res) {
     data: { accessToken: session.accessToken },
   });
 }
+
+export async function requestPasswordResetController(req, res, next) {
+  try {
+    await requestPasswordReset(req.body.email);
+
+    res.status(200).json({
+      status: 200,
+      message: 'Email successfully sent',
+    });
+  } catch (error) {
+    console.error('Error sending reset email:', error);
+    next(error);
+  }
+  res.json({ status: 200, message: 'Reset password successfully' });
+}
+
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    await resetPassword(token, password);
+
+    res.status(200).json({
+      status: 200,
+      message: 'Password has been successfully reset.',
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
