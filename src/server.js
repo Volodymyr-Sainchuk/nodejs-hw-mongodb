@@ -4,6 +4,7 @@ import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import errrorHandler from './middlewares/errorHandler.js';
 import router from './routers/index.js';
+import cookieParser from 'cookie-parser';
 
 const PORT = process.env.PORT || 3000;
 
@@ -14,6 +15,7 @@ export default function setupServer() {
   app.use(cors());
   app.use(pino());
   app.use(express.json());
+  app.use(cookieParser());
 
   app.use('/', router);
 
