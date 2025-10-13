@@ -1,4 +1,6 @@
 import createHttpError from 'http-errors';
+import { cloudinary } from '../utils/cloudinary.js';
+import streamifier from 'streamifier';
 
 import {
   getAllContacts,
@@ -66,7 +68,24 @@ export async function getContact(req, res, next) {
 export async function createContactController(req, res, next) {
   try {
     const { name, email, phone, isFavourite, contactType } = req.body;
-    const photo = req.file?.path || null;
+    let photoUrl = null;
+
+    // Якщо користувач передав фото — завантажуємо напряму з пам'яті
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: 'contacts' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          },
+        );
+
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      });
+
+      photoUrl = result.secure_url;
+    }
 
     const contact = await createContact({
       name,
@@ -74,7 +93,7 @@ export async function createContactController(req, res, next) {
       phone,
       isFavourite,
       contactType,
-      photo,
+      photo: photoUrl,
       owner: req.user._id,
     });
 

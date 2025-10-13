@@ -95,7 +95,11 @@ export async function requestPasswordResetController(req, res, next) {
     console.error('Error sending reset email:', error);
     next(error);
   }
-  res.json({ status: 200, message: 'Reset password successfully' });
+  res.json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
 }
 
 export const resetPasswordController = async (req, res, next) => {
