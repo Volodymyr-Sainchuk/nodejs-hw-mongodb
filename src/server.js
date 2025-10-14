@@ -1,10 +1,10 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import errrorHandler from './middlewares/errorHandler.js';
 import router from './routers/index.js';
-import cookieParser from 'cookie-parser';
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,8 +23,6 @@ export default function setupServer() {
     req.log.info('GET / called');
     res.send('main is here');
   });
-
-  app.use(errrorHandler);
 
   app.use(errrorHandler);
 
