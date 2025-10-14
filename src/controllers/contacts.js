@@ -70,7 +70,6 @@ export async function createContactController(req, res, next) {
     const { name, email, phone, isFavourite, contactType } = req.body;
     let photoUrl = null;
 
-    // Якщо користувач передав фото — завантажуємо напряму з пам'яті
     if (req.file) {
       const result = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
