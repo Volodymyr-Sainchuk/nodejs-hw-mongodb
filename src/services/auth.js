@@ -76,25 +76,26 @@ export async function registerUser(payload) {
 
 export async function loginUser(email, password) {
   const user = await User.findOne({ email });
-
-  if (user === null) {
+  if (!user) {
     throw new createHttpError.Unauthorized('Email or password is incorrect');
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
-  if (isMatch !== true) {
+  if (!isMatch) {
     throw new createHttpError.Unauthorized('Email or password is incorrect');
   }
 
   await Session.deleteOne({ userId: user._id });
 
-  return Session.create({
+  const session = await Session.create({
     userId: user._id,
     accessToken: crypto.randomBytes(30).toString('base64'),
     refreshToken: crypto.randomBytes(30).toString('base64'),
-    accessTokenValidUntil: new Date(Date.now() + 10 * 60 * 1000),
-    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    accessTokenValidUntil: new Date(Date.now() + 10 * 60 * 1000), // 10 хвилин
+    refreshTokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 години
   });
+
+  return session;
 }
 
 export async function logoutUser(sessionId) {
@@ -116,7 +117,7 @@ export async function refreshSession(sessionId, refreshToken) {
     throw new createHttpError.Unauthorized('Refresh token is expired');
   }
 
-  await Session.deleteOne({ _id: session._id });
+  // await Session.deleteOne({ _id: session._id });
 
   return Session.create({
     userId: session.userId,
