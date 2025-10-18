@@ -28,10 +28,11 @@ export async function registerUserConroller(req, res) {
 
 export async function loginUserController(req, res) {
   const session = await loginUser(req.body.email, req.body.password);
+  console.log('Created session:', session);
 
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expire: session.refreshTokenValidUntil,
+    expires: session.refreshTokenValidUntil,
   });
 
   res.cookie('refreshToken', session.refreshToken, {
@@ -99,7 +100,11 @@ export async function requestPasswordResetController(req, res, next) {
     console.error('Error sending reset email:', error);
     next(error);
   }
-  res.json({ status: 200, message: 'Reset password successfully' });
+  res.json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
 }
 
 export const resetPasswordController = async (req, res, next) => {

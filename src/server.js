@@ -1,10 +1,13 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
+import 'dotenv/config';
 import cors from 'cors';
 import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
-import errrorHandler from './middlewares/errorHandler.js';
+import errorHandler from './middlewares/errorHandler.js';
 import router from './routers/index.js';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import path from 'path';
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,8 +26,16 @@ export default function setupServer() {
     req.log.info('GET / called');
     res.send('main is here');
   });
+  const swaggerDocument = YAML.load(
+    path.join(process.cwd(), 'docs/openapi.yaml'),
+  );
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-  app.use(errrorHandler);
+  app.use((req, res) => {
+    res.status(404).json({ status: 404, message: 'Route not found' });
+  });
+
+  app.use(errorHandler);
 
   app.listen(PORT, (error) => {
     if (error) throw error;

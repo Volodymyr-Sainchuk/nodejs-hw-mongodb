@@ -28,13 +28,13 @@ router.post('/logout', logoutUserController);
 router.post('/refresh', refreshSessionController);
 
 router.post(
-  '/request-password-reset',
+  '/send-reset-email',
   validateBody(requestPasswordResetSchema),
   requestPasswordResetController,
 );
 
 router.post(
-  '/reset-password',
+  '/reset-pwd',
   validateBody(resetPasswordSchema),
   resetPasswordController,
 );
