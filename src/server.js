@@ -1,5 +1,6 @@
 import express from 'express';
 import 'dotenv/config';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
@@ -18,6 +19,7 @@ export default function setupServer() {
   app.use(cors());
   app.use(pino());
   app.use(express.json());
+  app.use(cookieParser());
 
   app.use('/', router);
 
