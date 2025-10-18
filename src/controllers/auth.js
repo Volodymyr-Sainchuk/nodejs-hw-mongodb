@@ -49,17 +49,21 @@ export async function loginUserController(req, res) {
   });
 }
 
-export async function logoutUserController(req, res) {
-  const { sessionId } = req.cookies;
+export async function logoutUserController(req, res, next) {
+  try {
+    const { sessionId } = req.cookies || {};
 
-  if (typeof sessionId === 'string') {
-    await logoutUser(sessionId);
+    if (sessionId) {
+      await logoutUser(sessionId);
+    }
+
+    res.clearCookie('sessionId');
+    res.clearCookie('refreshToken');
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
   }
-
-  res.clearCookie('sessionId');
-  res.clearCookie('refreshToken');
-
-  res.send({ status: 200, message: 'User logout successfully' });
 }
 
 export async function refreshSessionController(req, res) {
