@@ -1,38 +1,39 @@
 import createHttpError from 'http-errors';
-
-import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
+import { User } from '../models/user.js';
 
 export async function authenticate(req, res, next) {
   const { authorization } = req.headers;
 
-  if (typeof authorization !== 'string') {
-    throw new createHttpError.Unauthorized('Please provide access token');
+  if (!authorization) {
+    return next(new createHttpError.Unauthorized('No authorization header'));
   }
 
   const [bearer, accessToken] = authorization.split(' ', 2);
 
-  if (bearer !== 'Bearer' || typeof accessToken !== 'string') {
-    throw new createHttpError.Unauthorized('Please provide access token');
+  if (bearer !== 'Bearer' || !accessToken) {
+    return next(
+      new createHttpError.Unauthorized('Invalid authorization format'),
+    );
   }
 
   const session = await Session.findOne({ accessToken });
 
-  if (session === null) {
-    throw new createHttpError.Unauthorized('Session not found');
+  if (!session) {
+    return next(new createHttpError.Unauthorized('Session not found'));
   }
 
   if (session.accessTokenValidUntil < new Date()) {
-    throw new createHttpError.Unauthorized('Access token is expired');
+    return next(new createHttpError.Unauthorized('Access token is expired'));
   }
 
   const user = await User.findById(session.userId);
-
-  if (user === null) {
-    throw new createHttpError.Unauthorized('User not found');
+  if (!user) {
+    return next(new createHttpError.Unauthorized('User not found'));
   }
 
-  req.user = { id: user._id, name: user.name };
+  req.user = user;
+  req.session = session;
 
   next();
 }
