@@ -20,4 +20,4 @@ get:
       content:
         application/json:
           schema:
-            $ref: '../../../components/responses/errorResponse.yaml'
+            $ref: '../../../components/responses/500.yaml'

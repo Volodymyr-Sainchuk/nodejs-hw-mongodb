@@ -12,4 +12,4 @@ delete:
     '204':
       description: Контакт успішно видалено (без тіла відповіді)
     '404':
-      $ref: '../../../components/responses/errorResponse.yaml'
+      $ref: '../../../components/responses/401.yaml'

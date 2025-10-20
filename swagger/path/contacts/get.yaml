@@ -1,10 +1,26 @@
 get:
+  summary: Get all contacts
   tags:
     - Contacts
-  summary: Get all contacts
-  operationId: getContacts
-  security:
-    - bearerAuth: []
+  parameters:
+    - in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+      description: Номер сторінки (пагінація)
+    - in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+      description: Кількість контактів на сторінку
+    - in: query
+      name: favorite
+      schema:
+        type: boolean
+      description: Фільтр за "улюбленими" контактами
   responses:
     '200':
       description: List of contacts
@@ -14,5 +30,3 @@ get:
             type: array
             items:
               $ref: '../../components/schemas/contact.yaml'
-    '404':
-      description: Contacts not found

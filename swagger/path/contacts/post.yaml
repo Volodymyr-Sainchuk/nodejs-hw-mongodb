@@ -1,23 +1,36 @@
 post:
+  summary: Create a new contact
   tags:
     - Contacts
-  summary: Створити новий контакт
-  operationId: createContact
-  description: Створює новий контакт у базі даних. Потребує авторизації через Bearer токен.
-  security:
-    - bearerAuth: []
   requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: '../../components/schemas/contactInput.yaml'
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - phone
+        properties:
+          name:
+            type: string
+            example: Alice Smith
+          email:
+            type: string
+            example: alice@example.com
+          phone:
+            type: string
+            example: '+380931234567'
+          favorite:
+            type: boolean
+            example: false
   responses:
     '201':
-      description: Контакт успішно створено
+      description: Contact created successfully
       content:
         application/json:
           schema:
             $ref: '../../components/schemas/contact.yaml'
     '400':
-      $ref: '../../components/responses/errorResponse.yaml'
+      $ref: '../../components/responses/400.yaml'
