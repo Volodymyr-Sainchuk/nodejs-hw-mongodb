@@ -11,6 +11,7 @@ import YAML from 'yamljs';
 import path from 'path';
 
 const PORT = process.env.PORT || 3000;
+console.log(PORT);
 
 export default function setupServer() {
   initMongoConnection();
