@@ -11,11 +11,11 @@ tags:
     description: Operation with contacts
 servers:
   - url: http://localhost:3000
-  - url: https://contacts-api.onrender.com
+  - url: https://nodejs-hw-mongodb-kkxi.onrender.com
 paths:
   /contacts:
     get:
-      $ref: '../swagger/paths/contacts/get.yaml
+      $ref: ../swagger/paths/contacts/get.yaml
     post:
       $ref: ../swagger/paths/contacts/post.yaml
   /contacts/{id}:

@@ -1,10 +1,18 @@
 get:
+  summary: Get all contacts
   tags:
     - Contacts
-  summary: Get all contacts
-  operationId: getContacts
-  security:
-    - bearerAuth: []
+  parameters:
+    - in: query
+      name: name
+      schema:
+        type: string
+      description: Фільтр по імені
+    - in: query
+      name: phoneNumber
+      schema:
+        type: string
+      description: Фільтр по номеру
   responses:
     '200':
       description: List of contacts
@@ -14,5 +22,3 @@ get:
             type: array
             items:
               $ref: '../../components/schemas/contact.yaml'
-    '404':
-      description: Contacts not found
