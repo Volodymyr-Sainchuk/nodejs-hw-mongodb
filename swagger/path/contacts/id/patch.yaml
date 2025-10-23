@@ -1,0 +1,25 @@
+patch:
+  tags:
+    - Contacts
+  summary: Оновити контакт
+  operationId: updateContact
+  description: Оновлює дані контакту за його ID. Потребує авторизації через Bearer токен.
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../../../components/parameters/idParam.yaml'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../components/schemas/contactInput.yaml'
+  responses:
+    '200':
+      description: Контакт успішно оновлено
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/contact.yaml'
+    '404':
+      $ref: '../../../components/responses/errorResponse.yaml'
