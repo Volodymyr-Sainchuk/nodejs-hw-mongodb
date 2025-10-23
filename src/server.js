@@ -6,9 +6,6 @@ import pino from 'pino-http';
 import { initMongoConnection } from './db/initMongoConnection.js';
 import errorHandler from './middlewares/errorHandler.js';
 import router from './routers/index.js';
-import swaggerUi from 'swagger-ui-express';
-import YAML from 'yamljs';
-import path from 'path';
 
 const PORT = process.env.PORT || 3000;
 
@@ -21,11 +18,6 @@ export default async function setupServer() {
   app.use(pino());
   app.use(express.json());
   app.use(cookieParser());
-
-  const swaggerDocument = YAML.load(
-    path.join(process.cwd(), 'docs/openapi.yaml'),
-  );
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.use('/', router);
 
