@@ -11,10 +11,16 @@ import YAML from 'yamljs';
 import path from 'path';
 
 const PORT = process.env.PORT || 3000;
-console.log(PORT);
 
-export default function setupServer() {
-  initMongoConnection();
+export default async function setupServer() {
+  try {
+    await initMongoConnection();
+    console.log('✅ MongoDB connection established!');
+  } catch (err) {
+    console.error('❌ Failed to connect to MongoDB:', err);
+    process.exit(1);
+  }
+
   const app = express();
 
   app.use(cors());
@@ -26,12 +32,18 @@ export default function setupServer() {
 
   app.get('/', (req, res) => {
     req.log.info('GET / called');
-    res.send('main is here');
+    res.send('Main API is here');
   });
-  const swaggerDocument = YAML.load(
-    path.join(process.cwd(), 'docs/openapi.yaml'),
-  );
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+  try {
+    const swaggerDocument = YAML.load(
+      path.join(process.cwd(), 'docs/openapi.yaml'),
+    );
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    console.log('✅ Swagger UI available at /api-docs');
+  } catch (err) {
+    console.error('❌ Failed to load Swagger documentation:', err);
+  }
 
   app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Route not found' });
@@ -40,9 +52,16 @@ export default function setupServer() {
   app.use(errorHandler);
 
   app.listen(PORT, (error) => {
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Server failed to start:', error);
+      process.exit(1);
+    }
     console.log(`✅ Server is running on port ${PORT}`);
   });
 
   return app;
 }
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});

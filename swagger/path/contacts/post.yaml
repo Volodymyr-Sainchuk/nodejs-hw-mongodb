@@ -7,24 +7,7 @@ post:
   content:
     application/json:
       schema:
-        type: object
-        required:
-          - name
-          - email
-          - phone
-        properties:
-          name:
-            type: string
-            example: Alice Smith
-          email:
-            type: string
-            example: alice@example.com
-          phone:
-            type: string
-            example: '+380931234567'
-          favorite:
-            type: boolean
-            example: false
+        $ref: '../../components/schemas/contact.yaml'
   responses:
     '201':
       description: Contact created successfully

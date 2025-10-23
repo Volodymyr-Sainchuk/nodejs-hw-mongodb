@@ -4,23 +4,15 @@ get:
     - Contacts
   parameters:
     - in: query
-      name: page
+      name: name
       schema:
-        type: integer
-        minimum: 1
-      description: Номер сторінки (пагінація)
+        type: string
+      description: Фільтр по імені
     - in: query
-      name: limit
+      name: phoneNumber
       schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-      description: Кількість контактів на сторінку
-    - in: query
-      name: favorite
-      schema:
-        type: boolean
-      description: Фільтр за "улюбленими" контактами
+        type: string
+      description: Фільтр по номеру
   responses:
     '200':
       description: List of contacts
