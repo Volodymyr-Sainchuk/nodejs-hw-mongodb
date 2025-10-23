@@ -4,6 +4,7 @@ function parseNumber(value, defaultValue) {
   }
 
   const parsedValue = parseInt(value);
+  console.log(parsedValue);
 
   if (Number.isNaN(parsedValue)) {
     return defaultValue;

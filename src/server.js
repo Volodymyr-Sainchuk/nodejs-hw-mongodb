@@ -45,6 +45,8 @@ export default async function setupServer() {
     console.error('❌ Failed to load Swagger documentation:', err);
   }
 
+  app.use('/', router);
+
   app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Route not found' });
   });

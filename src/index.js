@@ -1,3 +1,5 @@
 import setupServer from './server.js';
 
-setupServer();
+(async () => {
+  await setupServer();
+})();
