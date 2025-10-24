@@ -1,24 +1,28 @@
-get:
-  summary: Get all contacts
-  tags:
-    - Contacts
-  parameters:
-    - in: query
-      name: name
-      schema:
-        type: string
-      description: Фільтр по імені
-    - in: query
-      name: phoneNumber
-      schema:
-        type: string
-      description: Фільтр по номеру
-  responses:
-    '200':
-      description: List of contacts
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '../../components/schemas/contact.yaml'
+summary: Get all contacts
+operationId: getContacts
+tags:
+  - Contacts
+parameters:
+  - in: query
+    name: name
+    schema:
+      type: string
+    description: Фільтр по імені
+  - in: query
+    name: phoneNumber
+    schema:
+      type: string
+    description: Фільтр по номеру
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: List of contacts
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../components/schemas/contact.yaml'
+  '401':
+    description: Unauthorized
