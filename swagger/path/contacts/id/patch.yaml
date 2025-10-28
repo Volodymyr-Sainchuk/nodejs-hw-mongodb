@@ -1,29 +1,65 @@
-tags:
-  - Contacts
-summary: Оновити контакт
+patch:
+  tags:
+    - Contacts
+summary: Оновити контакт за ID
 operationId: updateContact
-description: Оновлює дані контакту за його ID. Потребує авторизації через Bearer токен.
+description: Оновлює дані існуючого контакту за вказаним ідентифікатором
 security:
   - bearerAuth: []
 parameters:
   - name: id
     in: path
     required: true
-    description: ID контакту для оновлення
+    description: Ідентифікатор контакту
     schema:
       type: string
+      example: 671f3a24f9e4b22e64d4a95c
 requestBody:
   required: true
   content:
     application/json:
       schema:
-        $ref: '../../../components/schemas/contactInput.yaml'
+        type: object
+        properties:
+          name:
+            type: string
+            example: 'Updated Name'
+          email:
+            type: string
+            format: email
+            example: 'updated@example.com'
+          phone:
+            type: string
+            example: '+380501112233'
+          favorite:
+            type: boolean
+            example: true
 responses:
   '200':
     description: Контакт успішно оновлено
     content:
       application/json:
         schema:
-          $ref: '../../../components/schemas/contact.yaml'
+          type: object
+          properties:
+            _id:
+              type: string
+              example: '671f3a24f9e4b22e64d4a95c'
+            name:
+              type: string
+              example: 'Updated Name'
+            email:
+              type: string
+              example: 'updated@example.com'
+            phone:
+              type: string
+              example: '+380501112233'
+            favorite:
+              type: boolean
+              example: true
+  '400':
+    description: Некоректні дані
+  '401':
+    description: Неавторизовано
   '404':
-    $ref: '../../../components/responses/400.yaml'
+    description: Контакт не знайдено

@@ -1,27 +1,44 @@
-tags:
-  - Contacts
-summary: Отримати контакт за його ID
-operationId: getContactById
-description: Повертає детальну інформацію про контакт за вказаним у шляху ідентифікатором. Потребує авторизації через Bearer токен.
-security:
-  - bearerAuth: []
-parameters:
-  - name: id
-    in: path
-    required: true
-    description: ID контакту для отримання
-    schema:
-      type: string
-responses:
-  '200':
-    description: Контакт успішно знайдено
-    content:
-      application/json:
-        schema:
-          $ref: '../../../components/schemas/contact.yaml'
-  '404':
-    description: Контакт не знайдено
-    content:
-      application/json:
-        schema:
-          $ref: '../../../components/responses/500.yaml'
+get:
+  tags:
+    - Contacts
+  summary: Отримати контакт за ID
+  operationId: getContactById
+  description: Повертає дані контакту за вказаним ідентифікатором
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: Ідентифікатор контакту
+      schema:
+        type: string
+        example: 671f3a24f9e4b22e64d4a95c
+  responses:
+    '200':
+      description: Дані контакту
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: '671f3a24f9e4b22e64d4a95c'
+              name:
+                type: string
+                example: 'John Doe'
+              email:
+                type: string
+                format: email
+                example: 'john@example.com'
+              phone:
+                type: string
+                example: '+380501112233'
+              favorite:
+                type: boolean
+                example: false
+    '401':
+      description: Неавторизовано
+    '404':
+      description: Контакт не знайдено

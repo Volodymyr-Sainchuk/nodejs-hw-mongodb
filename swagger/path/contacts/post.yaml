@@ -1,7 +1,9 @@
-summary: Create a new contact
+post:
+  tags:
+    - Contacts
+summary: Створити новий контакт
 operationId: createContact
-tags:
-  - Contacts
+description: Додає новий контакт у базу даних
 security:
   - bearerAuth: []
 requestBody:
@@ -9,13 +11,46 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: '../../components/schemas/contact.yaml'
+        type: object
+        required:
+          - name
+          - email
+          - phone
+        properties:
+          name:
+            type: string
+            example: 'John Doe'
+          email:
+            type: string
+            format: email
+            example: 'john@example.com'
+          phone:
+            type: string
+            example: '+380991234567'
 responses:
   '201':
-    description: Contact created successfully
+    description: Контакт успішно створено
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/contact.yaml'
+          type: object
+          properties:
+            _id:
+              type: string
+              example: '671f3a24f9e4b22e64d4a95c'
+            name:
+              type: string
+              example: 'John Doe'
+            email:
+              type: string
+              example: 'john@example.com'
+            phone:
+              type: string
+              example: '+380991234567'
+            favorite:
+              type: boolean
+              example: false
   '400':
-    $ref: '../../components/responses/400.yaml'
+    description: Некоректні дані
+  '401':
+    description: Неавторизовано

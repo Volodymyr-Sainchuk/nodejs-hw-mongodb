@@ -1,23 +1,31 @@
-tags:
-  - Contacts
-summary: Видалити контакт
-operationId: deleteContact
-description: Видаляє контакт за ID користувача. Потребує авторизації через Bearer токен.
-security:
-  - bearerAuth: []
-parameters:
-  - name: id
-    in: path
-    required: true
-    description: ID контакту для видалення
-    schema:
-      type: string
-responses:
-  '204':
-    description: Контакт успішно видалено (без тіла відповіді)
-  '404':
-    description: Контакт не знайдено
-    content:
-      application/json:
-        schema:
-          $ref: ../../../components/responses/400.yaml
+delete:
+  tags:
+    - Contacts
+  summary: Видалити контакт за ID
+  operationId: deleteContact
+  description: Видаляє контакт за вказаним ідентифікатором
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: Ідентифікатор контакту
+      schema:
+        type: string
+        example: 671f3a24f9e4b22e64d4a95c
+  responses:
+    '200':
+      description: Контакт успішно видалено
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Контакт видалено
+    '401':
+      description: Неавторизовано
+    '404':
+      description: Контакт не знайдено
