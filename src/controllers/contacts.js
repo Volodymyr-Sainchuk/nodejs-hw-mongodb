@@ -44,8 +44,8 @@ export async function getContacts(req, res) {
 
 export async function getContact(req, res, next) {
   try {
-    const { id } = req.params;
-    const contact = await getContactById(id);
+    const { contactId } = req.params;
+    const contact = await getContactById(contactId);
 
     if (!contact) {
       return next(new createHttpError.NotFound('Contact not found'));
@@ -53,7 +53,7 @@ export async function getContact(req, res, next) {
 
     res.status(200).json({
       status: 200,
-      message: `Successfully found contact with id ${id}!`,
+      message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     });
   } catch (error) {
@@ -79,7 +79,6 @@ export async function createContactController(req, res, next) {
             else resolve(result);
           },
         );
-
         streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
       });
 
@@ -108,15 +107,25 @@ export async function createContactController(req, res, next) {
 
 export async function updateContactController(req, res, next) {
   try {
+    const { contactId } = req.params;
     const updateData = { ...req.body };
+
     if (req.file) {
-      updateData.photo = req.file.path;
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: 'contacts' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          },
+        );
+        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      });
+
+      updateData.photo = result.secure_url;
     }
 
-    const updatedContact = await updateContact(
-      req.params.contactId,
-      updateData,
-    );
+    const updatedContact = await updateContact(contactId, updateData);
 
     if (!updatedContact) {
       throw new createHttpError.NotFound('Contact not found');
@@ -134,7 +143,8 @@ export async function updateContactController(req, res, next) {
 
 export async function deleteContactController(req, res, next) {
   try {
-    const contact = await deleteContact(req.params.contactId);
+    const { contactId } = req.params;
+    const contact = await deleteContact(contactId);
 
     if (!contact) {
       throw new createHttpError.NotFound('Contact not found');
