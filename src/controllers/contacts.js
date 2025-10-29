@@ -14,7 +14,20 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 
-export async function getContacts(req, res) {
+async function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: 'contacts' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      },
+    );
+    streamifier.createReadStream(buffer).pipe(uploadStream);
+  });
+}
+
+export async function getContacts(req, res, next) {
   try {
     const { page = 1, perPage = 10 } = parsePaginationParams(req.query) || {};
     const { sortBy, sortOrder } = parseSortParams(req.query);
@@ -26,6 +39,7 @@ export async function getContacts(req, res) {
       sortBy,
       sortOrder,
       filter,
+      userId: req.user?._id, // фільтрація по користувачу
     });
 
     res.status(200).json({
@@ -34,11 +48,7 @@ export async function getContacts(req, res) {
       data: contacts,
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: 'Server error',
-      error: error.message,
-    });
+    next(error);
   }
 }
 
@@ -48,7 +58,7 @@ export async function getContact(req, res, next) {
     const contact = await getContactById(contactId);
 
     if (!contact) {
-      return next(new createHttpError.NotFound('Contact not found'));
+      throw new createHttpError.NotFound('Contact not found');
     }
 
     res.status(200).json({
@@ -57,48 +67,44 @@ export async function getContact(req, res, next) {
       data: contact,
     });
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: 'Server error',
-      error: error.message,
-    });
+    next(error);
   }
 }
 
+// POST /contacts
 export async function createContactController(req, res, next) {
   try {
-    const { name, email, phone, isFavourite, contactType } = req.body;
+    const { name, email, phoneNumber, isFavourite, contactType } = req.body;
     let photoUrl = null;
 
-    if (req.file) {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'contacts' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          },
-        );
-        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
-      });
-
-      photoUrl = result.secure_url;
+    if (!req.user || !req.user._id) {
+      return next(new createHttpError.Unauthorized('User not authenticated'));
     }
 
-    const contact = await createContact({
+    if (req.file) {
+      try {
+        const result = await uploadToCloudinary(req.file.buffer);
+        photoUrl = result.secure_url;
+      } catch (cloudErr) {
+        console.error('❌ Cloudinary upload failed:', cloudErr);
+        return next(createHttpError(500, 'Image upload failed'));
+      }
+    }
+
+    const newContact = await createContact({
       name,
       email,
-      phone,
-      isFavourite,
+      phoneNumber,
+      isFavourite: isFavourite === 'true' || isFavourite === true,
       contactType,
       photo: photoUrl,
-      owner: req.user._id,
+      userId: req.user._id,
     });
 
     res.status(201).json({
       status: 201,
       message: 'Successfully created a contact!',
-      data: contact,
+      data: newContact,
     });
   } catch (error) {
     next(error);
@@ -111,18 +117,18 @@ export async function updateContactController(req, res, next) {
     const updateData = { ...req.body };
 
     if (req.file) {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'contacts' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          },
-        );
-        streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
-      });
+      try {
+        const result = await uploadToCloudinary(req.file.buffer);
+        updateData.photo = result.secure_url;
+      } catch (cloudErr) {
+        console.error('❌ Cloudinary upload failed (PATCH):', cloudErr);
+        return next(createHttpError(500, 'Image upload failed'));
+      }
+    }
 
-      updateData.photo = result.secure_url;
+    if (updateData.isFavourite !== undefined) {
+      updateData.isFavourite =
+        updateData.isFavourite === 'true' || updateData.isFavourite === true;
     }
 
     const updatedContact = await updateContact(contactId, updateData);
@@ -144,9 +150,9 @@ export async function updateContactController(req, res, next) {
 export async function deleteContactController(req, res, next) {
   try {
     const { contactId } = req.params;
-    const contact = await deleteContact(contactId);
+    const deletedContact = await deleteContact(contactId);
 
-    if (!contact) {
+    if (!deletedContact) {
       throw new createHttpError.NotFound('Contact not found');
     }
 

@@ -34,3 +34,8 @@ export default async function setupServer() {
 
   return app;
 }
+
+setupServer().catch((err) => {
+  console.error('❌ Failed to start server:', err);
+  process.exit(1);
+});
