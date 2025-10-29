@@ -32,8 +32,3 @@ export default async function setupServer() {
     console.log(`✅ Server is running on port ${PORT}`);
   });
 }
-
-setupServer().catch((error) => {
-  console.error('❌ Failed to start server:', error);
-  process.exit(1);
-});
