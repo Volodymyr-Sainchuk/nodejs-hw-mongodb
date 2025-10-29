@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "goit-node-js",
   "type": "module",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "index": "node src/index.js",
     "start": "node src/server.js",

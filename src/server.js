@@ -35,7 +35,13 @@ export default async function setupServer() {
   return app;
 }
 
-setupServer().catch((err) => {
-  console.error('❌ Failed to start server:', err);
-  process.exit(1);
-});
+setupServer()
+  .then((app) => {
+    app.listen(PORT, () => {
+      console.log(`✅ Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  });
