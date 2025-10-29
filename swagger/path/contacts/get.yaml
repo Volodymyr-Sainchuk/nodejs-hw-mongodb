@@ -1,28 +1,27 @@
-get:
-  tags:
-    - Contacts
-  summary: Отримати всі контакти
-  description: Повертає список усіх контактів користувача
-  operationId: getAllContacts
-  security:
-    - bearerAuth: []
-  responses:
-    '200':
-      description: Список контактів отримано успішно
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 200
-              message:
-                type: string
-                example: Successfully fetched contacts
-              data:
-                type: array
-                items:
-                  $ref: '../../components/schemas/contact.yaml'
-    '500':
-      $ref: '../../components/responses/500.yaml'
+tags:
+  - Contacts
+summary: Отримати всі контакти
+description: Повертає список усіх контактів користувача
+operationId: getAllContacts
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Список контактів отримано успішно
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully fetched contacts
+            data:
+              type: array
+              items:
+                $ref: '../../components/schemas/contact.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

@@ -1,5 +1,5 @@
-post:
-  tags:
+
+tags:
     - Contacts
 summary: Створити новий контакт
 operationId: createContact

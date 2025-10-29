@@ -1,6 +1,5 @@
-patch:
-  tags:
-    - Contacts
+tags:
+  - Contacts
 summary: Оновити контакт за ID
 operationId: updateContact
 description: Оновлює дані існуючого контакту за вказаним ідентифікатором
