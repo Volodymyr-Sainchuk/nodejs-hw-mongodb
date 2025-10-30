@@ -1,27 +1,52 @@
 tags:
   - Contacts
-summary: Отримати всі контакти
-description: Повертає список усіх контактів користувача
-operationId: getAllContacts
+summary: Отримати список контактів
+operationId: getContacts
+description: Повертає список контактів поточного користувача з можливістю пагінації та фільтрації
 security:
   - bearerAuth: []
+parameters:
+  - in: query
+    name: page
+    schema:
+      type: integer
+      example: 1
+    description: Номер сторінки
+  - in: query
+    name: limit
+    schema:
+      type: integer
+      example: 10
+    description: Кількість контактів на сторінці
+  - in: query
+    name: favorite
+    schema:
+      type: boolean
+    description: Повернути лише улюблені контакти
 responses:
   '200':
-    description: Список контактів отримано успішно
+    description: Список контактів успішно отримано
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 200
-            message:
-              type: string
-              example: Successfully fetched contacts
-            data:
-              type: array
-              items:
-                $ref: '../../components/schemas/contact.yaml'
-  '500':
-    $ref: '../../components/responses/500.yaml'
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: '671f3a24f9e4b22e64d4a95c'
+              name:
+                type: string
+                example: 'John Doe'
+              email:
+                type: string
+                example: 'john@example.com'
+              phone:
+                type: string
+                example: '+380991234567'
+              favorite:
+                type: boolean
+                example: false
+  '401':
+    description: Неавторизовано

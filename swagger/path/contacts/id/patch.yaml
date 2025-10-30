@@ -2,17 +2,16 @@ tags:
   - Contacts
 summary: Оновити контакт за ID
 operationId: updateContact
-description: Оновлює дані існуючого контакту за вказаним ідентифікатором
+description: Оновлює дані існуючого контакту
 security:
   - bearerAuth: []
 parameters:
-  - name: id
-    in: path
+  - in: path
+    name: id
     required: true
-    description: Ідентифікатор контакту
     schema:
       type: string
-      example: 671f3a24f9e4b22e64d4a95c
+    description: ID контакту
 requestBody:
   required: true
   content:
@@ -29,33 +28,13 @@ requestBody:
             example: 'updated@example.com'
           phone:
             type: string
-            example: '+380501112233'
+            example: '+380981234567'
           favorite:
             type: boolean
             example: true
 responses:
   '200':
     description: Контакт успішно оновлено
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            _id:
-              type: string
-              example: '671f3a24f9e4b22e64d4a95c'
-            name:
-              type: string
-              example: 'Updated Name'
-            email:
-              type: string
-              example: 'updated@example.com'
-            phone:
-              type: string
-              example: '+380501112233'
-            favorite:
-              type: boolean
-              example: true
   '400':
     description: Некоректні дані
   '401':
