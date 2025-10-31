@@ -1,19 +1,18 @@
 import createHttpError from 'http-errors';
 import { cloudinary } from '../utils/cloudinary.js';
 import streamifier from 'streamifier';
-
 import {
   getAllContacts,
   getContactById,
   createContact,
   updateContact,
   deleteContact,
-} from '../services/contacts.js';
-
+} from '../services/contactsServices.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 
+// === Helper to upload image to Cloudinary ===
 async function uploadToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -27,11 +26,15 @@ async function uploadToCloudinary(buffer) {
   });
 }
 
-export async function getContacts(req, res, next) {
+export async function getContactsController(req, res, next) {
   try {
-    const { page = 1, perPage = 10 } = parsePaginationParams(req.query) || {};
+    const { page, perPage } = parsePaginationParams(req.query);
     const { sortBy, sortOrder } = parseSortParams(req.query);
     const filter = parseFilterParams(req.query);
+
+    if (!req.user || !req.user._id) {
+      return next(new createHttpError.Unauthorized('User not authenticated'));
+    }
 
     const contacts = await getAllContacts({
       page,
@@ -39,7 +42,7 @@ export async function getContacts(req, res, next) {
       sortBy,
       sortOrder,
       filter,
-      userId: req.user?._id, // фільтрація по користувачу
+      userId: req.user._id,
     });
 
     res.status(200).json({
@@ -52,7 +55,7 @@ export async function getContacts(req, res, next) {
   }
 }
 
-export async function getContact(req, res, next) {
+export async function getContactByIdController(req, res, next) {
   try {
     const { contactId } = req.params;
     const contact = await getContactById(contactId);
@@ -63,7 +66,7 @@ export async function getContact(req, res, next) {
 
     res.status(200).json({
       status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
+      message: `Successfully found contact with id ${contactId}`,
       data: contact,
     });
   } catch (error) {
@@ -71,15 +74,21 @@ export async function getContact(req, res, next) {
   }
 }
 
-// POST /contacts
 export async function createContactController(req, res, next) {
   try {
-    const { name, email, phoneNumber, isFavourite, contactType } = req.body;
-    let photoUrl = null;
+    const { name, email, phone, favorite } = req.body;
 
     if (!req.user || !req.user._id) {
       return next(new createHttpError.Unauthorized('User not authenticated'));
     }
+
+    if (!name || !email || !phone) {
+      return next(
+        createHttpError(400, 'Missing required fields: name, email, phone'),
+      );
+    }
+
+    let photoUrl = null;
 
     if (req.file) {
       try {
@@ -94,9 +103,8 @@ export async function createContactController(req, res, next) {
     const newContact = await createContact({
       name,
       email,
-      phoneNumber,
-      isFavourite: isFavourite === 'true' || isFavourite === true,
-      contactType,
+      phone,
+      favorite: favorite === 'true' || favorite === true,
       photo: photoUrl,
       userId: req.user._id,
     });
@@ -126,9 +134,9 @@ export async function updateContactController(req, res, next) {
       }
     }
 
-    if (updateData.isFavourite !== undefined) {
-      updateData.isFavourite =
-        updateData.isFavourite === 'true' || updateData.isFavourite === true;
+    if (updateData.favorite !== undefined) {
+      updateData.favorite =
+        updateData.favorite === 'true' || updateData.favorite === true;
     }
 
     const updatedContact = await updateContact(contactId, updateData);
