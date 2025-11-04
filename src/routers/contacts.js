@@ -22,7 +22,7 @@ const router = express.Router();
 
 router.get('/', ctrlWrapper(getContacts));
 
-router.get('/:id', isValidId, ctrlWrapper(getContact));
+router.get('/:contactId', isValidId, ctrlWrapper(getContact));
 
 router.post(
   '/',
@@ -32,13 +32,13 @@ router.post(
 );
 
 router.patch(
-  '/:id',
+  '/:contactId',
   isValidId,
   validateBody(updateContactSchema),
   upload.single('photo'),
   ctrlWrapper(updateContactController),
 );
 
-router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
+router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
 
 export default router;
