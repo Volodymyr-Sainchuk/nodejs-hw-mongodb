@@ -28,17 +28,11 @@ export default async function setupServer() {
   app.use(express.json());
   app.use(cookieParser());
 
-  app.use('/', router);
-
-  app.get('/', (req, res) => {
-    req.log.info('GET / called');
-    res.send('Main API is here');
-  });
-
   try {
     const swaggerDocument = YAML.load(
       path.join(process.cwd(), 'docs/openapi.yaml'),
     );
+
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     console.log('✅ Swagger UI available at /api-docs');
   } catch (err) {
@@ -46,6 +40,10 @@ export default async function setupServer() {
   }
 
   app.use('/', router);
+
+  app.get('/', (req, res) => {
+    res.send('Main API is here');
+  });
 
   app.use((req, res) => {
     res.status(404).json({ status: 404, message: 'Route not found' });
